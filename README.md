@@ -1,3 +1,15 @@
+---
+title: Ai Summarisation
+emoji: 🚀
+colorFrom: pink
+colorTo: indigo
+sdk: streamlit
+sdk_version: 1.32.2
+app_file: app.py
+pinned: false
+license: apache-2.0
+---
+
 # Argo AI Summarisation
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
