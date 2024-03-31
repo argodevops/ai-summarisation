@@ -4,19 +4,19 @@
 
 ## Description
 
-Argo AI Summarisation model which performs basic text and audio summarisation. The data to be summarised can be ingested via different methods and configured to defined the minimum and maximum length of the summarised text. It is built using `Streamlit` and `Huggingface` libraries.
+Argo AI Summarisation tool which performs basic text and audio summarisation. The data to be summarised can be ingested via different methods and configured to defined the minimum and maximum length of the summarised text. It is built using `Streamlit` and `Huggingface` libraries.
 
 ## Installation
 
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/argonauts/argo-ai-summarisation.git
+   git clone https://github.com/argonauts/ai-summarisation.git
    ```
 2. Navigate to the project directory:
 
    ```shell
-   cd argo-ai-summarisation
+   cd ai-summarisation
    ```
 3. Install dependencies
 
