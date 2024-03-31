@@ -40,7 +40,7 @@ st.sidebar.title('Options')
 max = st.sidebar.slider('Max Length', 50, 1000, step=10, value=500)
 min = st.sidebar.slider('Min Length', 10, 500, step=10, value=100)
 
-textTab, docTab, audioTab = st.tabs(["Paste Text", "Text Document", "Audio File"])
+textTab, docTab, audioTab = st.tabs(["Plain Text", "Text Document", "Audio File"])
 
 with textTab:
     sentence = st.text_area('Paste text to be summarised:', help='Paste text into text area and hit Summarise button', height=300)
