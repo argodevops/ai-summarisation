@@ -17,4 +17,4 @@ jobs:
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://ferguch9:$HF_TOKEN@huggingface.co/spaces/argodevops/ai-summarisation main
+        run: git push -f https://ferguch9:$HF_TOKEN@huggingface.co/spaces/argodevops/ai-summarisation main
