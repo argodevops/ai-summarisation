@@ -1,49 +1,36 @@
 import streamlit as st
 from transformers import pipeline
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+checkpoint = "facebook/bart-large-cnn"
 
 @st.cache_resource
 def load_model():
-    model = pipeline("summarization", model="facebook/bart-large-cnn")
+    model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint)
     return model
 
+@st.cache_resource
+def load_tokenizer():
+    tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+    return tokenizer
 
-def generate_chunks(inp_str):
-    max_chunk = 500
-    inp_str = inp_str.replace('.', '.<eos>')
-    inp_str = inp_str.replace('?', '?<eos>')
-    inp_str = inp_str.replace('!', '!<eos>')
-    
-    sentences = inp_str.split('<eos>')
-    current_chunk = 0 
-    chunks = []
-    for sentence in sentences:
-        if len(chunks) == current_chunk + 1: 
-            if len(chunks[current_chunk]) + len(sentence.split(' ')) <= max_chunk:
-                chunks[current_chunk].extend(sentence.split(' '))
-            else:
-                current_chunk += 1
-                chunks.append(sentence.split(' '))
-        else:
-            chunks.append(sentence.split(' '))
+model = load_model()
+tokenizer = load_tokenizer()
 
-    for chunk_id in range(len(chunks)):
-        chunks[chunk_id] = ' '.join(chunks[chunk_id])
-    return chunks
-
-
-summarizer = load_model()
-
-st.title('Argo AI Summarisation')
+st.title('Summarisation Tool')
+st.write(f"Performs basic summarisation of text and audit using the '{checkpoint}' model.")
 
 st.sidebar.title('Options')
-max = st.sidebar.slider('Max Length', 50, 1000, step=10, value=500)
-min = st.sidebar.slider('Min Length', 10, 500, step=10, value=100)
+summary_balance = st.sidebar.select_slider(
+    'Output Summarisation Detail:',
+    options=['concise', 'balanced', 'full'], 
+    value='balanced')
 
 textTab, docTab, audioTab = st.tabs(["Plain Text", "Text Document", "Audio File"])
 
 with textTab:
     sentence = st.text_area('Paste text to be summarised:', help='Paste text into text area and hit Summarise button', height=300)
+    st.write(f"{len(sentence)} characters and {len(sentence.split())} words")
 
 with docTab:
     st.text("Yet to be implemented...")
@@ -56,10 +43,24 @@ st.divider()
 
 with st.spinner("Generating Summary..."):
     if button and sentence:
-        chunks = generate_chunks(sentence)
-        res = summarizer(chunks,
-                         max_length=max, 
-                         min_length=min, 
-                         do_sample=False)
-        text = ' '.join([summ['summary_text'] for summ in res])
-        st.write(text)
+        chunks = [sentence]
+
+        text_words = len(sentence.split())
+        if summary_balance == 'concise':
+            min_multiplier = text_words * 0.1
+            max_multiplier = text_words * 0.3
+        elif summary_balance == 'full':
+            min_multiplier = text_words * 0.5
+            max_multiplier = text_words * 0.8
+        else:
+            min_multiplier = text_words * 0.2   
+            max_multiplier = text_words * 0.5
+        min_tokens = int(min_multiplier)
+        max_tokens = int(max_multiplier)
+
+        print(f"min tokens {min_tokens}, max tokens {max_tokens}")
+        inputs = tokenizer([sentence], max_length=2048, return_tensors='pt', truncation=True)
+        summary_ids = model.generate(inputs['input_ids'], min_new_tokens=min_tokens, max_new_tokens=max_tokens, do_sample=False)
+        summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+        st.write(summary)
+        st.write(f"{len(summary)} characters and {len(summary.split())} words")
