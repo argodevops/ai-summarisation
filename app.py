@@ -18,7 +18,7 @@ model = load_model()
 tokenizer = load_tokenizer()
 
 st.title('Summarisation Tool')
-st.write(f"Performs basic summarisation of text and audit using the '{checkpoint}' model.")
+st.write(f"Performs basic summarisation of text and audio using the '{checkpoint}' model.")
 
 st.sidebar.title('Options')
 summary_balance = st.sidebar.select_slider(
@@ -52,15 +52,13 @@ with st.spinner("Generating Summary..."):
         elif summary_balance == 'full':
             min_multiplier = text_words * 0.5
             max_multiplier = text_words * 0.8
-        else:
+        elif summary_balance == 'balanced':
             min_multiplier = text_words * 0.2   
             max_multiplier = text_words * 0.5
-        min_tokens = int(min_multiplier)
-        max_tokens = int(max_multiplier)
 
-        print(f"min tokens {min_tokens}, max tokens {max_tokens}")
+        print(f"min tokens {int(min_multiplier)}, max tokens {int(max_multiplier)}")
         inputs = tokenizer([sentence], max_length=2048, return_tensors='pt', truncation=True)
-        summary_ids = model.generate(inputs['input_ids'], min_new_tokens=min_tokens, max_new_tokens=max_tokens, do_sample=False)
+        summary_ids = model.generate(inputs['input_ids'], min_new_tokens=int(min_multiplier), max_new_tokens=int(max_multiplier), do_sample=False)
         summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         st.write(summary)
         st.write(f"{len(summary)} characters and {len(summary.split())} words")
