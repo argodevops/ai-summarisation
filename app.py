@@ -1,3 +1,4 @@
+import docx
 import streamlit as st
 import os
 import PyPDF2
@@ -30,6 +31,12 @@ def load_pdf_file(file):
     for page_num in range(len(pdf_reader.pages)):
         pdf_text += pdf_reader.pages[page_num].extract_text() or ""
     return pdf_text
+
+
+def load_word_file(file):
+    doc = docx.Document(file)
+    paragraphs = [p.text for p in doc.paragraphs]
+    return "\n".join(paragraphs)
 
 
 def split_text_into_chunks(text, max_chunk_length):
@@ -84,6 +91,8 @@ def main():
             _, file_ext = os.path.splitext(file_name)
             if "pdf" in file_ext:
                 sentence = load_pdf_file(uploaded_file)
+            elif "docx" in file_ext:
+                sentence = load_word_file(uploaded_file)
             else:
                 sentence = load_text_file(uploaded_file)
         st.write(f"{len(sentence)} characters and {len(sentence.split())} words")
