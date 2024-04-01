@@ -45,7 +45,6 @@ def split_text_into_chunks(text, max_chunk_length):
 
     if current_chunk:
         chunks.append(current_chunk.strip())
-
     return chunks
 
 
@@ -88,7 +87,7 @@ def main():
             else:
                 sentence = load_text_file(uploaded_file)
         st.write(f"{len(sentence)} characters and {len(sentence.split())} words")
-        st.write(sentence)
+        #st.write(sentence)
 
     with audioTab:
         st.text("Yet to be implemented...")
@@ -98,8 +97,8 @@ def main():
 
     with st.spinner("Generating Summary..."):
         if button and sentence:
-            chunks = split_text_into_chunks(sentence, 500)
-            print(chunks)
+            chunks = split_text_into_chunks(sentence, 10000)
+            print(f"Split into {len(chunks)} chunks")
 
             text_words = len(sentence.split())
             if summary_balance == "concise":
@@ -112,7 +111,7 @@ def main():
                 min_multiplier = text_words * 0.2
                 max_multiplier = text_words * 0.5
 
-            print(f"min tokens {int(min_multiplier)}, max tokens {int(max_multiplier)}")
+            print(f"Tokenizer min tokens {int(min_multiplier)}, max tokens {int(max_multiplier)}")
             inputs = tokenizer(
                 chunks,
                 max_length=model.config.max_position_embeddings,
