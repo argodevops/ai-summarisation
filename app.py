@@ -56,6 +56,12 @@ def split_text_into_chunks(text, max_chunk_length):
 
 
 def main():
+    st.set_page_config(
+        page_title="Summarisation Tool",
+        page_icon="🧊",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
     model = load_model()
     print("Model's maximum sequence length:", model.config.max_position_embeddings)
 
@@ -96,7 +102,7 @@ def main():
             else:
                 sentence = load_text_file(uploaded_file)
         st.write(f"{len(sentence)} characters and {len(sentence.split())} words")
-        #st.write(sentence)
+        # st.write(sentence)
 
     with audioTab:
         st.text("Yet to be implemented...")
@@ -120,7 +126,9 @@ def main():
                 min_multiplier = text_words * 0.2
                 max_multiplier = text_words * 0.5
 
-            print(f"Tokenizer min tokens {int(min_multiplier)}, max tokens {int(max_multiplier)}")
+            print(
+                f"Tokenizer min tokens {int(min_multiplier)}, max tokens {int(max_multiplier)}"
+            )
             inputs = tokenizer(
                 chunks,
                 max_length=model.config.max_position_embeddings,
