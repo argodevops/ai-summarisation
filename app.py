@@ -76,7 +76,7 @@ def main():
     st.sidebar.title("Options")
     summary_balance = st.sidebar.select_slider(
         "Output Summarisation Detail:",
-        options=["concise", "balanced", "full"],
+        options=["concise", "balanced", "detailed"],
         value="balanced",
     )
 
@@ -112,19 +112,23 @@ def main():
 
     with st.spinner("Generating Summary..."):
         if button and sentence:
-            chunks = split_text_into_chunks(sentence, 10000)
+            chunks = split_text_into_chunks(sentence, 100000)
             print(f"Split into {len(chunks)} chunks")
 
             text_words = len(sentence.split())
             if summary_balance == "concise":
                 min_multiplier = text_words * 0.1
                 max_multiplier = text_words * 0.3
-            elif summary_balance == "full":
+            elif summary_balance == "detailed":
                 min_multiplier = text_words * 0.5
                 max_multiplier = text_words * 0.8
             elif summary_balance == "balanced":
                 min_multiplier = text_words * 0.2
-                max_multiplier = text_words * 0.5
+                max_multiplier = text_words * 0.4
+
+            if max_multiplier > 1024:
+                max_multiplier = 1024
+                min_multiplier = 512
 
             print(
                 f"Tokenizer min tokens {int(min_multiplier)}, max tokens {int(max_multiplier)}"
